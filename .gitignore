@@ -1,0 +1,26 @@
+# Build
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+*.exe
+*.pdb
+*.cache
+# Ignore stray DLLs from build output, but keep ship-ready dist/ binaries.
+[Bb]in/**/*.dll
+[Oo]bj/**/*.dll
+[Oo]ut/**/*.dll
+
+# Visual Studio / VS Code
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# NuGet
+*.nupkg
+**/packages/
+
+# OS
+Thumbs.db
+Desktop.ini

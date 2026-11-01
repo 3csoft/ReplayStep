@@ -1,0 +1,52 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <Platforms>AnyCPU</Platforms>
+    <AlgoType>Indicator</AlgoType>
+    <AssemblyName>ReplayStep</AssemblyName>
+    <RootNamespace>ReplayStep</RootNamespace>
+    <SupportedOSPlatform>windows</SupportedOSPlatform>
+    <NoWarn>$(NoWarn);CA1416</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <QuantowerBin Condition="'$(QuantowerBin)' == ''">C:\Quantower\TradingPlatform\v1.146.17\bin</QuantowerBin>
+    <QuantowerIndicators Condition="'$(QuantowerIndicators)' == ''">C:\Quantower\Settings\Scripts\Indicators\ReplayStep</QuantowerIndicators>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>$(QuantowerIndicators)</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputPath>$(QuantowerIndicators)</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Drawing.Common" Version="10.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="TradingPlatform.BusinessLayer">
+      <HintPath>$(QuantowerBin)\TradingPlatform.BusinessLayer.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+
+  <PropertyGroup>
+    <RepoDistDir>$(MSBuildThisFileDirectory)..\dist\</RepoDistDir>
+  </PropertyGroup>
+  <Target Name="CopyReleaseArtifactsToDist" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
+    <MakeDir Directories="$(RepoDistDir)" />
+    <ItemGroup>
+      <_DistDlls Include="$(OutputPath)*.dll" Exclude="$(OutputPath)TradingPlatform*.dll" />
+      <_DistDeps Include="$(OutputPath)ReplayStep.deps.json" Condition="Exists('$(OutputPath)ReplayStep.deps.json')" />
+    </ItemGroup>
+    <Copy SourceFiles="@(_DistDlls)" DestinationFolder="$(RepoDistDir)" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(_DistDeps)" DestinationFolder="$(RepoDistDir)" SkipUnchangedFiles="true" Condition="@(_DistDeps->Count()) &gt; 0" />
+    <Message Importance="high" Text="Copied release artifacts to $(RepoDistDir)" />
+  </Target>
+</Project>
